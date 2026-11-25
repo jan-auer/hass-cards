@@ -305,6 +305,7 @@ export class WindCard extends LitElement {
 }
 
 registerCard("wind-card", WindCard, {
+	documentation: "wind",
 	name: "Wind",
 	description:
 		"Kompass mit Windrichtung und Geschwindigkeit; Böen, Mittel, Tagesspitze und Beaufort daneben",

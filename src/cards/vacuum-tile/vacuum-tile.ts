@@ -501,6 +501,7 @@ function iconColor(entity: HassEntity): string | undefined {
 }
 
 registerCard("vacuum-tile-card", VacuumTileCard, {
+	documentation: "vacuum",
 	name: "Saugroboter-Kachel",
 	description:
 		"Saugroboter mit Status, Akku und Zeilen darunter; im Betrieb Funktionen statt Zeilen",

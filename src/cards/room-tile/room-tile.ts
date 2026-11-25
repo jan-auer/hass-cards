@@ -498,6 +498,7 @@ function roomRgb(color: string | undefined): string {
 }
 
 registerCard("room-tile-card", RoomTileCard, {
+	documentation: "room-tile",
 	name: "Raum-Kachel",
 	description:
 		"Bereichskarte mit Foto oder Farbstreifen und Hervorhebung, wenn der Raum aktiv ist",

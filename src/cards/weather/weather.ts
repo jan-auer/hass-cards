@@ -444,6 +444,7 @@ interface Parts {
 }
 
 registerCard("weather-summary-card", WeatherSummaryCard, {
+	documentation: "weather",
 	name: "Wetter-Übersicht",
 	description:
 		"Temperatur, Luftfeuchte, Höchst-/Tiefstwert heute und 24-h-Verlauf; Regen nur, wenn es regnet",

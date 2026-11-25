@@ -1,16 +1,16 @@
 name: Release
 
-# Publishing a GitHub release (tag vX.Y.Z) builds the bundle and attaches dist/hass-cards.js,
-# which is the file HACS downloads (dist/ isn't committed).
+# Pushing a tag vX.Y.Z checks and builds first, then creates the GitHub release with dist/hass-cards.js
+# attached in one step, so a release never exists without the file HACS downloads (dist/ isn't committed).
 on:
-  release:
-    types: [published]
+  push:
+    tags: ["v*"]
 
 permissions:
   contents: write
 
 jobs:
-  bundle:
+  release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -30,7 +30,7 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run build
-      - name: Attach bundle
+      - name: Create the release with the bundle
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload "${GITHUB_REF_NAME}" dist/hass-cards.js --clobber
+        run: gh release create "${GITHUB_REF_NAME}" dist/hass-cards.js --title "${GITHUB_REF_NAME}" --generate-notes --verify-tag

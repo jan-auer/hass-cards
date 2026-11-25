@@ -199,6 +199,7 @@ export class FilterBar extends LitElement {
 }
 
 registerCard("filter-bar", FilterBar, {
+	documentation: "filter",
 	name: "Filterleiste",
 	description:
 		"Filter-Pillen für eine Seite; blendet die filter-section-Karten derselben Gruppe ein und aus. ohne Auswahl gilt der Standardwert (default); Auswahl nur im Speicher, bei jedem Besuch wieder zurückgesetzt",

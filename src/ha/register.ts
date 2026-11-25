@@ -1,5 +1,7 @@
 import type { CustomCardEntry, CustomCardFeatureEntry } from "./types";
 
+const README_URL = "https://github.com/jan-auer/hass-cards";
+
 /** Custom element names need a hyphen; new elements carry no brand prefix. */
 export type ElementName = `${string}-${string}`;
 
@@ -10,14 +12,24 @@ export type ElementName = `${string}-${string}`;
 export function registerCard(
 	tag: ElementName,
 	element: CustomElementConstructor,
-	picker: Omit<CustomCardEntry, "type">,
+	{
+		documentation,
+		...picker
+	}: Omit<CustomCardEntry, "type" | "documentationURL"> & {
+		/** The card's section in the README (its heading's anchor), the editor's help link. */
+		documentation: string;
+	},
 ): void {
 	if (!customElements.get(tag)) customElements.define(tag, element);
 
 	window.customCards ??= [];
 	const cards = window.customCards;
 	if (cards.some((card) => card.type === tag)) return;
-	cards.push({ ...picker, type: tag });
+	cards.push({
+		...picker,
+		type: tag,
+		documentationURL: `${README_URL}#${documentation}`,
+	});
 }
 
 /**

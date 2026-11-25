@@ -258,6 +258,7 @@ export class FilterSection extends LitElement {
 }
 
 registerCard("filter-section", FilterSection, {
+	documentation: "filter",
 	name: "Filterabschnitt",
 	description:
 		"Hält die Karten eines Abschnitts und zeigt sie nur, wenn der in der filter-bar derselben Gruppe gewählte Wert in show_for steht",

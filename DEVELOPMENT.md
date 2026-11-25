@@ -22,6 +22,6 @@ npx playwright install webkit
 
 HACS installs from GitHub releases, not tags. The tag is `v` plus the version in `package.json`.
 
-1. `npm version <x.y.z> --no-git-tag-version`, commit as `Release v<x.y.z>`, push, wait for CI and HACS validation.
-2. `gh release create v<x.y.z> --title v<x.y.z> --generate-notes`, then trim the notes to what changed per card, breaking config changes first.
-3. The release workflow checks the tag, runs lint and tests, builds and attaches `hass-cards.js`, which is the file HACS downloads.
+1. `npm version <x.y.z> --no-git-tag-version`, commit as `Release v<x.y.z>`, push, and wait for CI.
+2. `git tag v<x.y.z> && git push origin v<x.y.z>`.
+3. The release workflow checks the tag against `package.json`, runs lint and tests, builds, and creates the release with `hass-cards.js` attached and generated notes. Then trim the notes to what changed per card, breaking config changes first.

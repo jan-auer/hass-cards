@@ -374,6 +374,7 @@ export class RainCard extends LitElement {
 }
 
 registerCard("rain-card", RainCard, {
+	documentation: "rain",
 	name: "Regen",
 	description:
 		"Regen heute oder Regenrate, Ereignis/24 h/Woche/Monat, 14 Tage als Balken und Jahressumme",

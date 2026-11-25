@@ -238,6 +238,7 @@ export class ForecastDaysCard extends LitElement {
 }
 
 registerCard("forecast-days-card", ForecastDaysCard, {
+	documentation: "forecast",
 	name: "Forecast days",
 	description:
 		"Daily forecast rows on one shared temperature scale, with the current temperature on today's bar.",

@@ -213,6 +213,7 @@ export class FloatingTabBar extends LitElement {
 }
 
 registerCard("floating-tab-bar", FloatingTabBar, {
+	documentation: "tab-bar",
 	name: "Schwebende Tab-Leiste",
 	description: "Schwebende Tab-Leiste für die Fußzeile einer Ansicht",
 	preview: true,

@@ -102,13 +102,15 @@ export interface CustomCardEntry {
 	name: string;
 	description: string;
 	preview?: boolean;
+	/** The editor's help link. */
+	documentationURL?: string;
 }
 
 /** One entry of `window.customCardFeatures`, which feeds HA's feature picker (custom card features docs). */
 export interface CustomCardFeatureEntry {
 	type: string;
 	name: string;
-	/** Whether the feature fits the card it's offered for; true for every card when left out. */
+	/** Whether the feature picker offers it for a card (editor only; configured features always render). */
 	isSupported?: (
 		hass: HomeAssistant,
 		context: Record<string, unknown>,

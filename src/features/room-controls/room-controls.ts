@@ -412,5 +412,8 @@ export class RoomControls extends LitElement {
 
 registerCardFeature("room-controls", RoomControls, {
 	name: "Raum-Schalter",
+	// A room's buttons: offered only on cards about an area (the area card, room-tile-card).
+	isSupported: (_hass, context) =>
+		typeof context.area_id === "string" && context.area_id !== "",
 	configurable: true,
 });

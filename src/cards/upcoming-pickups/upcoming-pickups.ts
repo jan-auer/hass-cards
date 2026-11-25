@@ -178,6 +178,7 @@ export class UpcomingPickupsCard extends LitElement {
 }
 
 registerCard("upcoming-pickups-card", UpcomingPickupsCard, {
+	documentation: "waste-pickups",
 	name: "Müllabfuhr",
 	description:
 		"Die nächsten Abholtermine je Tonne: Heute, Morgen oder in N Tagen; ✓ Rausgestellt nach dem Bestätigen",

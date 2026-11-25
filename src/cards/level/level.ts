@@ -207,6 +207,7 @@ export class LevelCard extends LitElement {
 }
 
 registerCard("level-card", LevelCard, {
+	documentation: "level",
 	name: "Stufen-Karte",
 	description:
 		"Wert mit Stufenwort und Farbband (UV-Index, Luftqualitätsindex), im Stil der Sensor-Karte",
