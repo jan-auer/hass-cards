@@ -184,6 +184,14 @@ describe("vacuum-tile-card", () => {
 		]);
 	});
 
+	it("tappable, but no hover or ripple: a widget, like HA's weather or sensor cards", async () => {
+		const { card } = await mount("docked");
+		const haCard = shadow(card).querySelector("ha-card") as HTMLElement;
+		expect(haCard.getAttribute("role")).toBe("button");
+		expect(getComputedStyle(haCard).cursor).toBe("pointer");
+		expect(shadow(card).querySelector("ha-ripple")).toBeNull();
+	});
+
 	it("a long press on the card runs hold_action instead of the tap", async () => {
 		const { card, actions } = await mount("docked");
 		const lines = shadow(card).querySelector(".lines") as HTMLElement;

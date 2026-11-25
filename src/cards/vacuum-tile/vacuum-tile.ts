@@ -238,7 +238,6 @@ export class VacuumTileCard extends LitElement {
 			@pointerleave=${this._cancelHold}
 			@contextmenu=${(event: Event) => this._config?.hold_action.action !== "none" && event.preventDefault()}
 		>
-			${tappable ? html`<div class="background"><ha-ripple></ha-ripple></div>` : nothing}
 			<div class="top">
 				<div
 					class="icon ${iconTappable ? "tappable" : ""}"
@@ -321,14 +320,8 @@ export class VacuumTileCard extends LitElement {
 			outline: 2px solid var(--accent-color, var(--primary-color));
 			outline-offset: 2px;
 		}
-		/* As in HA's tile: the tap surface with the ripple lies under everything; text lets taps through,
-		   only the icon and the feature buttons catch them. */
-		.background {
-			position: absolute;
-			inset: 0;
-			border-radius: inherit;
-			overflow: hidden;
-		}
+		/* A widget, like HA's weather or sensor cards: tappable, but no hover or ripple. Text lets taps
+		   through to the card; only the icon and the feature buttons catch them. */
 		.top,
 		.slot,
 		hui-card-features {
