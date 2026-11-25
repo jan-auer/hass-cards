@@ -201,6 +201,21 @@ describe("weather-summary-card", () => {
 		}
 	});
 
+	it("rings the now dot in the card's background, whatever the theme", async () => {
+		await mount(mockHass(false));
+		card.style.setProperty("--card-background-color", "rgb(1, 2, 3)");
+		const now = card.shadowRoot?.querySelector(".spark .now") as Element;
+		expect(getComputedStyle(now).stroke).toBe("rgb(1, 2, 3)");
+	});
+
+	it("colours the weather icon with HA's weather icon variables", async () => {
+		await mount(mockHass(false));
+		card.style.setProperty("--weather-icon-moon-color", "rgb(4, 5, 6)");
+		const moon = card.shadowRoot?.querySelector(".weather-icon .moon");
+		expect(moon).not.toBeNull();
+		expect(getComputedStyle(moon as Element).fill).toBe("rgb(4, 5, 6)");
+	});
+
 	it("fills its grid cell like stock cards", async () => {
 		const cell = document.createElement("div");
 		cell.style.height = "140px";

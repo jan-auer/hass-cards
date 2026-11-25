@@ -3,7 +3,7 @@ import { fireHassAction } from "../../ha/actions";
 import { entitiesChanged } from "../../ha/entities";
 import { languageOf, numericState } from "../../ha/format";
 import { registerCard } from "../../ha/register";
-import { reflectDarkMode } from "../../ha/theme";
+import { NEUTRAL_TRACK, reflectDarkMode } from "../../ha/theme";
 import type { HomeAssistant, LovelaceCardConfig } from "../../ha/types";
 import { weatherIcon, weatherIconStyles } from "../weather/condition";
 import { temperatureColor } from "../weather/palette";
@@ -158,12 +158,11 @@ export class ForecastDaysCard extends LitElement {
 		weatherIconStyles,
 		css`
 			:host {
-				--_track: rgba(118, 118, 128, 0.16);
+				--_track: ${NEUTRAL_TRACK};
 				--_rain-text: #1e88e5;
 				display: block;
 			}
 			:host([dark]) {
-				--_track: rgba(255, 255, 255, 0.1);
 				--_rain-text: #4fb4ff;
 			}
 			ha-card {

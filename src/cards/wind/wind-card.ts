@@ -3,7 +3,7 @@ import { fireHassAction } from "../../ha/actions";
 import { entitiesChanged } from "../../ha/entities";
 import { decimal, languageOf, numericState } from "../../ha/format";
 import { registerCard } from "../../ha/register";
-import { reflectDarkMode } from "../../ha/theme";
+import { NEUTRAL_TRACK, reflectDarkMode } from "../../ha/theme";
 import type { HomeAssistant, LovelaceCardConfig } from "../../ha/types";
 import { normalizeConfig, STUB_ENTITIES, type WindConfig } from "./config";
 import { beaufort, cardinal, kmh } from "./wind";
@@ -191,11 +191,10 @@ export class WindCard extends LitElement {
 		:host {
 			display: block;
 			height: 100%;
-			--_track: rgba(118, 118, 128, 0.16);
+			--_track: ${NEUTRAL_TRACK};
 			--_arrow: var(--wind-card-arrow-color, #2f7bea);
 		}
 		:host([dark]) {
-			--_track: rgba(255, 255, 255, 0.1);
 			--_arrow: var(--wind-card-arrow-color, #5aa9ff);
 		}
 		ha-card {

@@ -77,7 +77,7 @@ export function spark(
 
 /**
  * Styles for `spark()`. The host sets `--_curve` (line, high dot, now dot), `--_curve-fill` (the colour at
- * 28 % for the top of the fill), `--_ring` (around the now dot) and `--_rain-bar`.
+ * 28 % for the top of the fill) and `--_rain-bar`; the now dot's ring is the card's background.
  */
 export const sparkStyles = css`
 	.spark {
@@ -109,7 +109,7 @@ export const sparkStyles = css`
 	}
 	.spark .now {
 		fill: var(--_curve, #ff9500);
-		stroke: var(--_ring, #f1f2f6);
+		stroke: var(--ha-card-background, var(--card-background-color, #fff));
 		stroke-width: 1.5;
 	}
 	.spark .rain-bar {

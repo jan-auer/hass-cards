@@ -84,4 +84,11 @@ describe("wind-card", () => {
 		]);
 		expect(card.shadowRoot?.querySelector(".arrow")).toBeNull();
 	});
+
+	it("draws the compass ring in the theme's text colour, faint", async () => {
+		const card = await mount(mockHass({ "sensor.wind_speed": ["5", "km/h"] }));
+		card.style.setProperty("--rgb-primary-text-color", "10, 20, 30");
+		const ring = card.shadowRoot?.querySelector(".ring") as Element;
+		expect(getComputedStyle(ring).stroke).toBe("rgba(10, 20, 30, 0.1)");
+	});
 });

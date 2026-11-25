@@ -68,30 +68,30 @@ export function weatherIcon(
 	</svg>`;
 }
 
-/** HA's default weather icon colours (themes rarely set --weather-icon-* tokens), for `weatherIcon()`. */
+/** HA's weather icon colours: its theme variables, with HA's defaults, for `weatherIcon()`. */
 export const weatherIconStyles = css`
 	.weather-icon {
 		display: block;
 		flex: none;
 	}
 	.weather-icon .sun {
-		fill: #fdd93c;
+		fill: var(--weather-icon-sun-color, #fdd93c);
 	}
 	.weather-icon .moon {
-		fill: #fcf497;
+		fill: var(--weather-icon-moon-color, #fcf497);
 	}
 	.weather-icon .cloud-back {
-		fill: #d4d4d4;
+		fill: var(--weather-icon-cloud-back-color, #d4d4d4);
 	}
 	.weather-icon .cloud-front {
-		fill: #f9f9f9;
+		fill: var(--weather-icon-cloud-front-color, #f9f9f9);
 	}
 	.weather-icon .rain {
-		fill: #30b3ff;
+		fill: var(--weather-icon-rain-color, #30b3ff);
 	}
 	.weather-icon .snow {
-		fill: #f9f9f9;
-		stroke: #d4d4d4;
+		fill: var(--weather-icon-snow-color, #f9f9f9);
+		stroke: var(--weather-icon-snow-stroke-color, #d4d4d4);
 		stroke-width: 1;
 		paint-order: stroke;
 	}

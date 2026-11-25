@@ -3,7 +3,7 @@ import { fireHassAction } from "../../ha/actions";
 import { entitiesChanged } from "../../ha/entities";
 import { decimal, languageOf, numericState } from "../../ha/format";
 import { registerCard } from "../../ha/register";
-import { reflectDarkMode } from "../../ha/theme";
+import { HAIRLINE, NEUTRAL_TRACK, reflectDarkMode } from "../../ha/theme";
 import type { HomeAssistant, LovelaceCardConfig } from "../../ha/types";
 import {
 	configForm,
@@ -250,15 +250,13 @@ export class RainCard extends LitElement {
 		:host {
 			--_rain-text: #1e88e5;
 			--_rain-bar: #30b3ff;
-			--_track: rgba(118, 118, 128, 0.16);
-			--_hair: rgba(60, 60, 67, 0.14);
+			--_track: ${NEUTRAL_TRACK};
+			--_hair: ${HAIRLINE};
 			display: block;
 			height: 100%;
 		}
 		:host([dark]) {
 			--_rain-text: #4fb4ff;
-			--_track: rgba(255, 255, 255, 0.1);
-			--_hair: rgba(255, 255, 255, 0.08);
 		}
 		ha-card {
 			display: flex;

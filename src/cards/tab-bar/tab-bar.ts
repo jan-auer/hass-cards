@@ -1,7 +1,7 @@
 import { css, html, LitElement, nothing } from "lit";
 import { fireHassAction } from "../../ha/actions";
 import { registerCard } from "../../ha/register";
-import { reflectDarkMode } from "../../ha/theme";
+import { NEUTRAL_TRACK, reflectDarkMode } from "../../ha/theme";
 import type { HomeAssistant, LovelaceCardConfig } from "../../ha/types";
 import { findActiveTab, resolveTabPath } from "./active-tab";
 import {
@@ -146,7 +146,7 @@ export class FloatingTabBar extends LitElement {
       --_border-color: rgba(255, 255, 255, 0.7);
       --_box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 8px 26px rgba(20, 30, 60, 0.12);
       --_backdrop-filter: blur(12px) saturate(200%);
-      --_active-background: rgba(118, 118, 128, 0.16);
+      --_active-background: ${NEUTRAL_TRACK};
       /* The host stays in HA's footer as a placeholder of the bar's height, so the footer keeps
          reserving the space and the page's last card ends above the bar. */
       display: block;
@@ -157,7 +157,6 @@ export class FloatingTabBar extends LitElement {
       --_border-color: rgba(255, 255, 255, 0.08);
       --_box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 8px 26px rgba(0, 0, 0, 0.5);
       --_backdrop-filter: blur(12px) saturate(140%);
-      --_active-background: rgba(255, 255, 255, 0.12);
     }
     /*
      * The bar's bottom edge sits 22 px above the screen edge, the same on every page. HA's footer
