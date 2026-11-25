@@ -1,0 +1,34 @@
+{
+	"name": "hass-cards",
+	"version": "0.1.0",
+	"private": true,
+	"description": "Jan's personal Lovelace cards for Home Assistant",
+	"type": "module",
+	"license": "MIT",
+	"engines": {
+		"node": ">=22.22.2"
+	},
+	"scripts": {
+		"build": "vite build",
+		"typecheck": "tsc --noEmit",
+		"lint": "biome check . && tsc --noEmit",
+		"format": "biome check --write .",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"screenshots": "vitest run --config vitest.screenshots.config.ts",
+		"screenshots:live": "node scripts/live-screenshots.mjs"
+	},
+	"dependencies": {
+		"lit": "3.3.3"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.6.8",
+		"@mdi/js": "7.4.47",
+		"@vitest/browser-playwright": "5.1.1",
+		"jsdom": "31.0.1",
+		"playwright": "1.65.1",
+		"typescript": "7.0.2",
+		"vite": "8.3.8",
+		"vitest": "5.1.1"
+	}
+}
