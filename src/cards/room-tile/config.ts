@@ -18,7 +18,7 @@ export interface RoomTileConfig {
 	highlight: Highlight;
 	/** Any of these active (HA's `stateActive`) makes the room active. */
 	highlight_entities: string[];
-	/** `#rrggbb`; also the stock area card's icon colour. */
+	/** `#rrggbb` or a theme colour name (`teal`, as HA's colour picker writes it); also the stock area card's icon colour. */
 	color?: string;
 	/** A photo instead of the area's own picture. */
 	image?: string;
@@ -54,15 +54,23 @@ function pick<T extends string>(
 	return value as T;
 }
 
+/** The room colour for CSS: hex as is, a theme colour name as HA's variable (`teal` → `--teal-color`). */
+export function roomColor(color: string | undefined): string {
+	if (!color) return DEFAULT_ROOM_COLOR;
+	return color.startsWith("#") ? color : `var(--${color}-color)`;
+}
+
+const DEFAULT_ROOM_COLOR = "#889948";
+
 /** Validate a card config. Throws only when the card can't render, so HA shows its error card. */
 export function normalizeConfig(config: LovelaceCardConfig): RoomTileConfig {
 	if (typeof config.area !== "string" || !config.area)
 		throw new Error('"area" fehlt');
 	if (
 		config.color !== undefined &&
-		!/^#[0-9a-f]{6}$/i.test(String(config.color))
+		!/^(#[0-9a-f]{6}|[a-z]+(-[a-z]+)*)$/i.test(String(config.color))
 	)
-		throw new Error('"color" muss eine Farbe wie #889948 sein');
+		throw new Error('"color" muss eine Farbe wie #889948 oder teal sein');
 	const rest = Object.fromEntries(
 		Object.entries(config).filter(([key]) => !OWN_KEYS.includes(key)),
 	);

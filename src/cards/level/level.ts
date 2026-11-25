@@ -26,7 +26,7 @@ export class LevelCard extends LitElement {
 	static getStubConfig(hass?: HomeAssistant): Partial<LovelaceCardConfig> {
 		const entity =
 			Object.keys(hass?.states ?? {}).find((id) => id.includes("uv_index")) ??
-			"";
+			"sensor.uv_index";
 		return {
 			entity,
 			max: 11,
@@ -100,7 +100,7 @@ export class LevelCard extends LitElement {
 				<div class="band" style="background: ${bandGradient(config)}">
 					${value === undefined ? nothing : html`<i style="left: ${dotPosition(config, value) * 100}%"></i>`}
 				</div>
-				<div class="labels"><span>${config.ends[0]}</span><span class="note">${config.note ?? ""}</span><span>${config.ends[1]}</span></div>
+				<div class="labels"><span>${config.start_label}</span><span class="note">${config.middle_label ?? ""}</span><span>${config.end_label}</span></div>
 			</div>
 		</ha-card>`;
 	}

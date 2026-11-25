@@ -13,7 +13,7 @@ import type {
 	LovelaceCardElement,
 } from "../../ha/types";
 import { activeAlert, alertIcon } from "./alerts";
-import { normalizeConfig, type RoomTileConfig } from "./config";
+import { normalizeConfig, type RoomTileConfig, roomColor } from "./config";
 import { highlightStyle } from "./highlight";
 import { sensorEntities, sensorLine } from "./sensors";
 
@@ -28,8 +28,6 @@ const FEATURE_GAP = 12;
  * starts at 56 px and an overlay can't move it, so 36 px at 12 px leaves the stock 8 px gap.
  */
 const PHOTO_SIZE = 36;
-
-const DEFAULT_ROOM_RGB = "136, 153, 72";
 
 interface AreaCardElement extends LovelaceCardElement {
 	layout?: string;
@@ -208,7 +206,7 @@ export class RoomTileCard extends LitElement {
 	protected override updated(): void {
 		const config = this._config;
 		if (!config) return;
-		this.style.setProperty("--_rc", roomRgb(config.color));
+		this.style.setProperty("--_rc", roomColor(config.color));
 		// The card whose theme variables carry the highlight: the stock card, or our own header card.
 		const inner =
 			config.identity === "photo-large"
@@ -221,7 +219,11 @@ export class RoomTileCard extends LitElement {
 			inner.style.removeProperty("--ha-card-box-shadow");
 			return;
 		}
-		const style = highlightStyle(config.highlight, dark, roomRgb(config.color));
+		const style = highlightStyle(
+			config.highlight,
+			dark,
+			roomColor(config.color),
+		);
 		if (style.background)
 			inner.style.setProperty("--ha-card-background", style.background);
 		else inner.style.removeProperty("--ha-card-background");
@@ -363,7 +365,7 @@ export class RoomTileCard extends LitElement {
 		.strip {
 			width: 4px;
 			height: 100%;
-			background: rgb(var(--_rc));
+			background: var(--_rc);
 		}
 		.photo {
 			position: absolute;
@@ -414,7 +416,7 @@ export class RoomTileCard extends LitElement {
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			color: rgb(var(--_rc));
+			color: var(--_rc);
 			--mdc-icon-size: 24px;
 		}
 		.large .info {
@@ -461,7 +463,7 @@ export class RoomTileCard extends LitElement {
 			--ha-ripple-pressed-opacity: 0.12;
 		}
 		.large .background.room-colour {
-			--ha-ripple-color: rgb(var(--_rc));
+			--ha-ripple-color: var(--_rc);
 		}
 		.large .header,
 		.large .below,
@@ -496,15 +498,6 @@ export class RoomTileCard extends LitElement {
 			--mdc-icon-size: 12px;
 		}
 	`;
-}
-
-function roomRgb(color: string | undefined): string {
-	const match = color
-		? /^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(color)
-		: null;
-	return match
-		? [1, 2, 3].map((i) => Number.parseInt(match[i], 16)).join(", ")
-		: DEFAULT_ROOM_RGB;
 }
 
 registerCard("room-tile-card", RoomTileCard, {

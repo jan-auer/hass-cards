@@ -47,9 +47,11 @@ export function normalizeConfig(config: LovelaceCardConfig): VacuumTileConfig {
 		warning: text("warning"),
 		warning_icon: text("warning_icon") ?? "mdi:exclamation",
 		features: Array.isArray(config.features) ? config.features : [],
-		features_states: Array.isArray(config.features_states)
-			? config.features_states.map(String)
-			: undefined,
+		// An empty list (the editor's select after clearing it) means the default, like no list.
+		features_states:
+			Array.isArray(config.features_states) && config.features_states.length
+				? config.features_states.map(String)
+				: undefined,
 		active: text("active"),
 		tap_action: (config.tap_action as ActionConfig | undefined) ?? MORE_INFO,
 		hold_action: (config.hold_action as ActionConfig | undefined) ?? MORE_INFO,

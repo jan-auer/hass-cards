@@ -12,7 +12,6 @@ const UV = normalizeConfig({
 	type: "custom:level-card",
 	entity: "sensor.uv_index",
 	max: 11,
-	ends: ["0", "11+"],
 	levels: [
 		{ from: 0, word: "niedrig", color: "#34C759" },
 		{ from: 3, word: "mäßig", color: "#FFCC00" },
@@ -71,10 +70,10 @@ describe("bandGradient", () => {
 });
 
 describe("normalizeConfig", () => {
-	it("defaults min to the first level and the ends to min and max", () => {
+	it("defaults min to the first level and the labels to min and max", () => {
 		expect(AQI.min).toBe(1);
-		expect(AQI.ends).toEqual(["1", "5"]);
-		expect(UV.ends).toEqual(["0", "11+"]);
+		expect([AQI.start_label, AQI.end_label]).toEqual(["1", "5+"]);
+		expect([UV.start_label, UV.end_label]).toEqual(["0", "11+"]);
 	});
 
 	it("keeps HA name items (`{type: entity}` …) for hass.formatEntityName", () => {

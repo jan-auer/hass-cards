@@ -29,8 +29,8 @@ const CHART_HEIGHT = 76;
 const INSET = 2 * 14 + 2;
 
 /**
- * The rain card: today's total or the rate while it rains, event/24 h/week/month totals, 14 daily
- * bars from the recorder and the year's total. Self-contained, so it fits on any page.
+ * The rain card: today's total or the rate while it rains, a list of totals beside it, and 14 daily
+ * bars from the recorder at the bottom. Self-contained, so it fits on any page.
  */
 export class RainCard extends LitElement {
 	static override properties = {
@@ -174,15 +174,16 @@ export class RainCard extends LitElement {
 				<div class="s">${line}</div>`;
 		}
 
-		const event = numericState(this.hass, config.event);
-		const eventText = event ? mm(event) : "–";
-		const year = numericState(this.hass, config.year);
-		const rows: [string, unknown][] = [
-			["Ereignis", raining && event ? html`<b>${eventText}</b>` : eventText],
-			["24 h", mm(numericState(this.hass, config.last_24h))],
-			["Woche", mm(numericState(this.hass, config.week))],
-			["Monat", mm(numericState(this.hass, config.month))],
-		];
+		const rows = config.rows.map((row) => {
+			const entity = this.hass?.states[row.entity];
+			const name =
+				row.name ??
+				(entity
+					? (this.hass?.formatEntityName?.(entity) ??
+						String(entity.attributes.friendly_name ?? row.entity))
+					: row.entity);
+			return [name, mm(numericState(this.hass, row.entity))] as const;
+		});
 
 		return html`
 			<ha-card
@@ -200,11 +201,8 @@ export class RainCard extends LitElement {
 						${rows.map(([key, value]) => html`<div class="kv"><span>${key}</span><span>${value}</span></div>`)}
 					</div>
 				</div>
+				<div class="rl">Pro Tag, ${DAYS} Tage</div>
 				${this._chart(bars, starts, language)}
-				<div class="rl">
-					<span>Pro Tag, ${DAYS} Tage</span>
-					${year !== undefined ? html`<span>Jahr ${mm(year)}</span>` : nothing}
-				</div>
 			</ha-card>
 		`;
 	}
@@ -344,7 +342,6 @@ export class RainCard extends LitElement {
 			display: block;
 			width: 100%;
 			height: ${CHART_HEIGHT}px;
-			margin-top: 6px;
 		}
 		.chart text {
 			font-size: 9.5px;
@@ -356,9 +353,11 @@ export class RainCard extends LitElement {
 		.track {
 			fill: var(--_track);
 		}
+		/* The caption sits right above the bars, which end the card. */
 		.rl {
-			display: flex;
-			justify-content: space-between;
+			margin-top: auto;
+			margin-bottom: -2px;
+			line-height: 1.2;
 			font-size: 11px;
 			color: var(--secondary-text-color);
 			white-space: nowrap;
@@ -370,6 +369,6 @@ registerCard("rain-card", RainCard, {
 	documentation: "rain",
 	name: "Regen",
 	description:
-		"Regen heute oder Regenrate, Ereignis/24 h/Woche/Monat, 14 Tage als Balken und Jahressumme",
+		"Regen heute oder Regenrate, frei wählbare Summen daneben und 14 Tage als Balken",
 	preview: true,
 });

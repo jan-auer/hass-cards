@@ -36,6 +36,8 @@ export const UNKNOWN_BIN: Omit<Bin, "name"> = {
 	color: "#8E8E93",
 };
 
+const isEmptyList = (value: unknown) => Array.isArray(value) && !value.length;
+
 /** Validate a user config. Throws only when the card can't render, so HA shows its error card. */
 export function normalizeConfig(
 	config: LovelaceCardConfig,
@@ -44,7 +46,8 @@ export function normalizeConfig(
 	const entity = config.entity ?? STUB_ENTITY;
 	if (typeof entity !== "string" || !entity) throw fail("`entity` fehlt");
 	let bins = [...DEFAULT_BINS];
-	if (config.bins !== undefined) {
+	// An empty list (the editor's list after removing every bin) means the defaults, like no list.
+	if (config.bins !== undefined && !isEmptyList(config.bins)) {
 		if (!Array.isArray(config.bins)) throw fail("`bins` muss eine Liste sein");
 		bins = (config.bins as Record<string, unknown>[]).map((bin) => ({
 			name: String(bin.name ?? ""),

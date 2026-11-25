@@ -161,10 +161,10 @@ describe("room-tile-card", () => {
 		card.hass = mockHass({ "light.buro": entity("light.buro", "on") });
 		await card.updateComplete;
 		expect(inner.style.getPropertyValue("--ha-card-background")).toContain(
-			"rgba(152, 62, 74, 0.16)",
+			"color-mix(in srgb, #983E4A 16%, transparent)",
 		);
 		expect(inner.style.getPropertyValue("--ha-card-box-shadow")).toContain(
-			"inset 0 0 0 1px rgba(152, 62, 74, 0.42)",
+			"inset 0 0 0 1px color-mix(in srgb, #983E4A 42%, transparent)",
 		);
 	});
 
@@ -172,7 +172,7 @@ describe("room-tile-card", () => {
 		const on = mockHass({ "light.buro": entity("light.buro", "on") });
 		await mount({ highlight: "warm", highlight_entities: ["light.buro"] }, on);
 		expect(inner.style.getPropertyValue("--ha-card-background")).toContain(
-			"rgba(255, 149, 0, 0.13)",
+			"color-mix(in srgb, #ff9500 13%, transparent)",
 		);
 		card.remove();
 		await mount({ highlight: "none", highlight_entities: ["light.buro"] }, on);
@@ -292,7 +292,7 @@ describe("room-tile-card", () => {
 				.getPropertyValue("--ha-ripple-color")
 				.trim();
 		await mount({ identity: "photo-large", highlight: "room" });
-		expect(rippleColor()).toBe("rgb(152, 62, 74)");
+		expect(rippleColor()).toBe("#983E4A");
 		for (const highlight of ["warm", "none"]) {
 			card.remove();
 			await mount({ identity: "photo-large", highlight });

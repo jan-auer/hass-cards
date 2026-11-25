@@ -37,7 +37,7 @@ temperature: sensor.outdoor_temperature # optional: today's dot
 
 ### Rain
 
-Rain today, this week, month and year, with the last 14 days as bars.
+Rain today, with any totals you choose beside it and the last 14 days as bars.
 
 ![Rain card](images/rain-light.png)
 
@@ -45,10 +45,10 @@ Rain today, this week, month and year, with the last 14 days as bars.
 type: custom:rain-card
 today: sensor.rain_today
 rate: sensor.rain_rate
-event: sensor.rain_event
-week: sensor.rain_week
-month: sensor.rain_month
-year: sensor.rain_year
+rows:
+  - { entity: sensor.rain_event, name: Ereignis }
+  - entity: sensor.rain_week
+  - entity: sensor.rain_month
 ```
 
 ### Wind

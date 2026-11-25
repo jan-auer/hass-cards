@@ -15,7 +15,6 @@ import type {
  *   name: UV-Index
  *   icon: mdi:weather-sunny
  *   max: 11
- *   ends: ["0", "11+"]
  *   levels:
  *     - { from: 0, word: niedrig, color: "#34C759" }
  *     - { from: 3, word: mäßig, color: "#FFCC00" }
@@ -49,10 +48,10 @@ export interface LevelConfig {
 	max: number;
 	/** Neutral text after the value when the active level has no word. */
 	suffix?: string;
-	/** Labels under the band's left and right end; default min and max. */
-	ends: [string, string];
-	/** Text between the end labels, ellipsized. */
-	note?: string;
+	/** Labels under the band: left (default min), middle (ellipsized, default none), right (default max with a +). */
+	start_label: string;
+	middle_label?: string;
+	end_label: string;
 	tap_action: ActionConfig;
 }
 
@@ -86,7 +85,10 @@ export function normalizeConfig(config: LovelaceCardConfig): LevelConfig {
 		typeof config[key] === "string" && config[key] !== ""
 			? (config[key] as string)
 			: undefined;
-	const ends = Array.isArray(config.ends) ? config.ends.map(String) : [];
+	const label = (key: string) =>
+		typeof config[key] === "string" || typeof config[key] === "number"
+			? String(config[key]) || undefined
+			: undefined;
 	return {
 		entity: config.entity,
 		name:
@@ -98,8 +100,9 @@ export function normalizeConfig(config: LovelaceCardConfig): LevelConfig {
 		min,
 		max,
 		suffix: text("suffix"),
-		ends: [ends[0] ?? String(min), ends[1] ?? String(max)],
-		note: text("note"),
+		start_label: label("start_label") ?? String(min),
+		middle_label: label("middle_label"),
+		end_label: label("end_label") ?? `${max}+`,
 		tap_action: (config.tap_action as ActionConfig | undefined) ?? {
 			action: "more-info",
 		},

@@ -32,29 +32,33 @@ const NEUTRAL: Record<Mode, HighlightStyle> = {
 	},
 };
 
-/** The room tint and the warm tone. */
+/** The room tint and the warm tone; wash and line in percent of the colour. */
 const TINTS = {
-	room: { light: { wash: 0.16, line: 0.42 }, dark: { wash: 0.22, line: 0.5 } },
+	room: { light: { wash: 16, line: 42 }, dark: { wash: 22, line: 50 } },
 	warm: {
-		light: { rgb: "255, 149, 0", wash: 0.13, line: 0.38 },
-		dark: { rgb: "255, 159, 10", wash: 0.14, line: 0.4 },
+		light: { color: "#ff9500", wash: 13, line: 38 },
+		dark: { color: "#ff9f0a", wash: 14, line: 40 },
 	},
 } as const;
 
-/** The style for an active room; `roomRgb` is the room colour as `r, g, b`. */
+/** `color` at `percent` opacity; works for hex and theme variables alike. */
+const tinted = (color: string, percent: number) =>
+	`color-mix(in srgb, ${color} ${percent}%, transparent)`;
+
+/** The style for an active room; `roomColor` is any CSS colour (hex or a theme variable). */
 export function highlightStyle(
 	highlight: Exclude<Highlight, "none">,
 	mode: Mode,
-	roomRgb: string,
+	roomColor: string,
 ): HighlightStyle {
 	if (highlight === "room" || highlight === "warm") {
 		const tint =
 			highlight === "warm"
 				? TINTS.warm[mode]
-				: { rgb: roomRgb, ...TINTS.room[mode] };
+				: { color: roomColor, ...TINTS.room[mode] };
 		return {
-			background: wash(`rgba(${tint.rgb}, ${tint.wash})`),
-			shadow: `${ring(`rgba(${tint.rgb}, ${tint.line})`)}, ${BASE}`,
+			background: wash(tinted(tint.color, tint.wash)),
+			shadow: `${ring(tinted(tint.color, tint.line))}, ${BASE}`,
 		};
 	}
 	return NEUTRAL[mode];

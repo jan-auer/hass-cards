@@ -75,7 +75,7 @@ export class VacuumTileCard extends LitElement {
 	static getStubConfig(hass?: HomeAssistant): Partial<LovelaceCardConfig> {
 		const entity =
 			Object.keys(hass?.states ?? {}).find((id) => id.startsWith("vacuum.")) ??
-			"";
+			"vacuum.example";
 		return { entity };
 	}
 
