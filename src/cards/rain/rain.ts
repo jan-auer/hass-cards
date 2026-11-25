@@ -201,7 +201,6 @@ export class RainCard extends LitElement {
 						${rows.map(([key, value]) => html`<div class="kv"><span>${key}</span><span>${value}</span></div>`)}
 					</div>
 				</div>
-				<div class="rl">Pro Tag, ${DAYS} Tage</div>
 				${this._chart(bars, starts, language)}
 			</ha-card>
 		`;
@@ -338,10 +337,13 @@ export class RainCard extends LitElement {
 			font-weight: 600;
 			color: var(--_rain-text);
 		}
+		/* The bars end the card; a small gap keeps them off the values above. */
 		.chart {
 			display: block;
 			width: 100%;
 			height: ${CHART_HEIGHT}px;
+			margin-top: auto;
+			padding-top: 10px;
 		}
 		.chart text {
 			font-size: 9.5px;
@@ -352,15 +354,6 @@ export class RainCard extends LitElement {
 		}
 		.track {
 			fill: var(--_track);
-		}
-		/* The caption sits right above the bars, which end the card. */
-		.rl {
-			margin-top: auto;
-			margin-bottom: -2px;
-			line-height: 1.2;
-			font-size: 11px;
-			color: var(--secondary-text-color);
-			white-space: nowrap;
 		}
 	`;
 }
