@@ -304,7 +304,7 @@ export class RoomTileCard extends LitElement {
 			aria-label=${tappable ? name : nothing}
 			@click=${this._tapLarge}
 		>
-			${tappable ? html`<div class="background"><ha-ripple></ha-ripple></div>` : nothing}
+			${tappable ? html`<div class="background ${config.highlight === "room" ? "room-colour" : ""}"><ha-ripple></ha-ripple></div>` : nothing}
 			<div class="header">
 				${
 					picture
@@ -447,11 +447,21 @@ export class RoomTileCard extends LitElement {
 		/* As in HA's tile: the tap surface (with the ripple) lies under everything; content and the feature
 		   row let taps through, only the feature buttons catch them. So a tap on a spacer or gap lands on
 		   the card, and pressing a button doesn't ripple the whole card. */
+		/* As in HA's tile container: clipped to the card's radius (spelled out, since inherit resolves to 0
+		   through ha-card's slot) over its border, 4 % on hover, 12 % pressed. The colour is the stock area
+		   card's --state-icon-color; only the room highlight uses the room's colour. */
 		.large .background {
 			position: absolute;
 			inset: 0;
-			border-radius: inherit;
+			margin: calc(-1 * var(--ha-card-border-width, 1px));
+			border-radius: var(--ha-card-border-radius, var(--ha-border-radius-lg, 12px));
 			overflow: hidden;
+			--ha-ripple-color: var(--state-icon-color);
+			--ha-ripple-hover-opacity: 0.04;
+			--ha-ripple-pressed-opacity: 0.12;
+		}
+		.large .background.room-colour {
+			--ha-ripple-color: rgb(var(--_rc));
 		}
 		.large .header,
 		.large .below,

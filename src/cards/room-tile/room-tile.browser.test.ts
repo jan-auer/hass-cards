@@ -267,4 +267,37 @@ describe("room-tile-card", () => {
 		).toBe("none");
 		expect($(".large ha-ripple")).not.toBeNull();
 	});
+
+	it("photo-large: the ripple is clipped to the card's corners and tinted like the stock area card", async () => {
+		await mount({ identity: "photo-large", highlight: "neutral" });
+		card.style.setProperty("--state-icon-color", "rgb(1, 2, 3)");
+		const background = $(".large .background") as HTMLElement;
+		const style = getComputedStyle(background);
+		expect(style.borderRadius).toBe("12px");
+		expect(style.overflow).toBe("hidden");
+		expect(style.getPropertyValue("--ha-ripple-color").trim()).toBe(
+			"rgb(1, 2, 3)",
+		);
+		expect(style.getPropertyValue("--ha-ripple-hover-opacity").trim()).toBe(
+			"0.04",
+		);
+		expect(style.getPropertyValue("--ha-ripple-pressed-opacity").trim()).toBe(
+			"0.12",
+		);
+	});
+
+	it("photo-large: the ripple takes the room's colour only with the room highlight", async () => {
+		const rippleColor = () =>
+			getComputedStyle($(".large .background") as HTMLElement)
+				.getPropertyValue("--ha-ripple-color")
+				.trim();
+		await mount({ identity: "photo-large", highlight: "room" });
+		expect(rippleColor()).toBe("rgb(152, 62, 74)");
+		for (const highlight of ["warm", "none"]) {
+			card.remove();
+			await mount({ identity: "photo-large", highlight });
+			card.style.setProperty("--state-icon-color", "rgb(1, 2, 3)");
+			expect(rippleColor()).toBe("rgb(1, 2, 3)");
+		}
+	});
 });
