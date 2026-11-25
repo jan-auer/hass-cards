@@ -193,7 +193,6 @@ export class RainCard extends LitElement {
 			>
 				<div class="hd">
 					<ha-icon icon="mdi:weather-rainy"></ha-icon>Regen
-					${tappable ? html`<ha-icon class="go" icon="mdi:chevron-right"></ha-icon>` : nothing}
 				</div>
 				<div class="top">
 					<div class="left">${left}</div>
@@ -288,10 +287,6 @@ export class RainCard extends LitElement {
 			color: var(--secondary-text-color);
 			white-space: nowrap;
 			--mdc-icon-size: 15px;
-		}
-		.hd .go {
-			margin-left: auto;
-			--mdc-icon-size: 18px;
 		}
 		.top {
 			display: grid;

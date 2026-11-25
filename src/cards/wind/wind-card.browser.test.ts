@@ -85,6 +85,22 @@ describe("wind-card", () => {
 		expect(card.shadowRoot?.querySelector(".arrow")).toBeNull();
 	});
 
+	it("stays a button when tappable but shows no chevron, like stock cards", async () => {
+		const card = await mount(mockHass({ "sensor.wind_speed": ["5", "km/h"] }));
+		card.setConfig({
+			type: "custom:wind-card",
+			...STUB_ENTITIES,
+			tap_action: { action: "more-info" },
+		});
+		await card.updateComplete;
+		const haCard = card.shadowRoot?.querySelector("ha-card");
+		expect(haCard?.getAttribute("role")).toBe("button");
+		const icons = card.shadowRoot?.querySelectorAll(".header ha-icon") ?? [];
+		expect([...icons].map((icon) => icon.getAttribute("icon"))).toEqual([
+			"mdi:weather-windy",
+		]);
+	});
+
 	it("draws the compass ring in the theme's text colour, faint", async () => {
 		const card = await mount(mockHass({ "sensor.wind_speed": ["5", "km/h"] }));
 		card.style.setProperty("--rgb-primary-text-color", "10, 20, 30");

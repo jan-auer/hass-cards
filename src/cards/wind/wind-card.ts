@@ -145,7 +145,6 @@ export class WindCard extends LitElement {
 		>
 			<div class="header">
 				<ha-icon icon="mdi:weather-windy"></ha-icon>Wind
-				${tappable ? html`<ha-icon class="chevron" icon="mdi:chevron-right"></ha-icon>` : nothing}
 			</div>
 			<div class="body">
 				${this._compass(speed, direction, this._unit(config.speed))}
@@ -225,11 +224,6 @@ export class WindCard extends LitElement {
 			color: var(--secondary-text-color);
 			white-space: nowrap;
 			--mdc-icon-size: 15px;
-		}
-		.header .chevron {
-			margin-left: auto;
-			--mdc-icon-size: 18px;
-			opacity: 0.6;
 		}
 		.body {
 			flex: 1;
