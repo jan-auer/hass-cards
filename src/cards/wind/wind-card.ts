@@ -5,7 +5,12 @@ import { decimal, languageOf, numericState } from "../../ha/format";
 import { registerCard } from "../../ha/register";
 import { NEUTRAL_TRACK, reflectDarkMode } from "../../ha/theme";
 import type { HomeAssistant, LovelaceCardConfig } from "../../ha/types";
-import { normalizeConfig, STUB_ENTITIES, type WindConfig } from "./config";
+import {
+	configForm,
+	normalizeConfig,
+	STUB_ENTITIES,
+	type WindConfig,
+} from "./config";
 import { beaufort, cardinal, kmh } from "./wind";
 
 const DASH = "–";
@@ -48,6 +53,10 @@ export class WindCard extends LitElement {
 
 	declare _config?: WindConfig;
 	private _hass?: HomeAssistant;
+
+	static getConfigForm() {
+		return configForm;
+	}
 
 	static getStubConfig(): Partial<LovelaceCardConfig> {
 		return { ...STUB_ENTITIES };

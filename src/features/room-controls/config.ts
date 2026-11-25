@@ -145,13 +145,14 @@ interface FormField {
 
 const LABELS: Record<string, string> = {
 	controls: "Knöpfe",
-	spacer_style: "Platzhalter",
+	spacer_style: "Aussehen der Lücken",
 	columns: "Feste Anzahl Plätze",
 };
 
 const HELPERS: Record<string, string> = {
-	columns:
-		"1–4. Leer: so viele, wie die Knöpfe brauchen (4, wenn einer den Rest nimmt). Mehr als 4: „…“-Menü.",
+	spacer_style:
+		"Eine Lücke ist ein freier Platz in der Reihe, in der Liste als Art „Lücke“ angelegt.",
+	columns: "Leer: so viele, wie die Knöpfe brauchen.",
 };
 
 /**
@@ -166,7 +167,7 @@ export const configForm = {
 			selector: {
 				object: {
 					multiple: true,
-					// The list shows the entity's name; spacers show "Platzhalter" below their empty name.
+					// The list shows the entity's name; spacers show "Lücke" below their empty name.
 					label_field: "entity",
 					description_field: "type",
 					fields: {
@@ -178,7 +179,7 @@ export const configForm = {
 									mode: "dropdown",
 									options: [
 										{ value: "entity", label: "Knopf" },
-										{ value: "spacer", label: "Platzhalter" },
+										{ value: "spacer", label: "Lücke" },
 									],
 								},
 							},
@@ -238,7 +239,7 @@ export const configForm = {
 				select: {
 					mode: "dropdown",
 					options: [
-						{ value: "empty", label: "Leer" },
+						{ value: "empty", label: "Unsichtbar" },
 						{ value: "ghost", label: "Angedeutet" },
 					],
 				},

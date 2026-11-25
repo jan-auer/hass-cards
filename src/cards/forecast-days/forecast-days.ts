@@ -7,7 +7,7 @@ import { NEUTRAL_TRACK, reflectDarkMode } from "../../ha/theme";
 import type { HomeAssistant, LovelaceCardConfig } from "../../ha/types";
 import { weatherIcon, weatherIconStyles } from "../weather/condition";
 import { temperatureColor } from "../weather/palette";
-import { type ForecastDaysConfig, normalizeConfig } from "./config";
+import { configForm, type ForecastDaysConfig, normalizeConfig } from "./config";
 import { type DailyForecast, dayLabel, dayRows, degrees } from "./scale";
 
 /** Days on one shared temperature scale (`dayRows`), from HA's daily forecast. */
@@ -25,6 +25,10 @@ export class ForecastDaysCard extends LitElement {
 	/** The entity the live subscription is for, and how to end it. */
 	private _subscribed?: string;
 	private _unsubscribe?: Promise<() => Promise<void>>;
+
+	static getConfigForm() {
+		return configForm;
+	}
 
 	static getStubConfig(): Partial<ForecastDaysConfig> {
 		return { entity: "weather.home" };

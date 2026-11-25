@@ -6,6 +6,7 @@ import {
 	type FilterItem,
 	parseBarConfig,
 } from "./config";
+import "./bar-editor";
 import { filterStore } from "./store";
 
 /**
@@ -38,6 +39,10 @@ export class FilterBar extends LitElement {
 	hass?: HomeAssistant;
 
 	private _unsubscribe?: () => void;
+
+	static getConfigElement(): HTMLElement {
+		return document.createElement("filter-bar-editor");
+	}
 
 	static getStubConfig(): Partial<LovelaceCardConfig> {
 		return {

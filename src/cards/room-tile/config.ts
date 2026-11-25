@@ -32,7 +32,8 @@ export interface RoomTileConfig {
 	area_card: LovelaceCardConfig;
 }
 
-const OWN_KEYS = [
+/** Our options on top of the stock area card's. */
+export const OWN_KEYS = [
 	"type",
 	"identity",
 	"highlight",

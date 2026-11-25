@@ -8,6 +8,8 @@ In HACS, add `https://github.com/jan-auer/hass-cards` as a custom repository of 
 
 ## Cards
 
+Every card and the room controls feature can be set up in HA's visual card editor. The YAML below shows the same options.
+
 ### Weather
 
 Current temperature, humidity and conditions with today's temperature curve.

@@ -10,10 +10,17 @@ const LABELS: Record<string, string> = {
 	lines:
 		"Zeilen unten, wenn keine Funktionen zu sehen sind (Vorlage, **fett**)",
 	warning: "Warnung am Symbol (Vorlage, wahr = Abzeichen)",
+	warning_icon: "Symbol der Warnung",
+	features_states: "Funktionen in diesen Zuständen",
 	active: "Aktiv (Vorlage, wahr = Funktionen statt Zeilen)",
 	tap_action: "Tippen auf die Karte",
 	hold_action: "Gedrückt halten",
 	icon_tap_action: "Tippen auf das Symbol",
+};
+
+const HELPERS: Record<string, string> = {
+	warning_icon: "Leer: Ausrufezeichen.",
+	features_states: "Leer: jeder aktive Zustand (nicht angedockt).",
 };
 
 export const configForm = {
@@ -46,6 +53,24 @@ export const configForm = {
 		{ name: "state_detail", selector: { template: {} } },
 		{ name: "lines", selector: { template: {} } },
 		{ name: "warning", selector: { template: {} } },
+		{ name: "warning_icon", selector: { icon: {} } },
+		{
+			name: "features_states",
+			selector: {
+				select: {
+					multiple: true,
+					custom_value: true,
+					options: [
+						{ value: "cleaning", label: "Reinigt" },
+						{ value: "paused", label: "Pausiert" },
+						{ value: "returning", label: "Kehrt zurück" },
+						{ value: "error", label: "Fehler" },
+						{ value: "idle", label: "Untätig" },
+						{ value: "docked", label: "Angedockt" },
+					],
+				},
+			},
+		},
 		{ name: "active", selector: { template: {} } },
 		{ name: "tap_action", selector: { ui_action: {} } },
 		{ name: "hold_action", selector: { ui_action: {} } },
@@ -53,4 +78,5 @@ export const configForm = {
 	],
 	computeLabel: (schema: { name: string }) =>
 		LABELS[schema.name] ?? schema.name,
+	computeHelper: (schema: { name: string }) => HELPERS[schema.name],
 };

@@ -91,3 +91,47 @@ export function parseSectionConfig(
 		cards: cards as LovelaceCardConfig[],
 	};
 }
+
+type FormField = { name: string };
+
+const LABELS: Record<string, string> = {
+	group: "Gruppe",
+	default: "Wert ohne Auswahl",
+	name: "Name",
+	value: "Wert",
+	icon: "Symbol",
+};
+
+const HELPERS: Record<string, string> = {
+	group: "Verbindet die Leiste mit den Filter-Abschnitten der Seite.",
+	default: "Leer: der Wert des ersten Eintrags.",
+	value: "Die Filter-Abschnitte, die diesen Wert listen, sind zu sehen.",
+	name: "Leer: der Wert.",
+};
+
+/** The bar's own settings in `filter-bar`'s editor (the pills are a list below them). */
+export const barSettingsForm = {
+	schema: [
+		{
+			type: "grid",
+			name: "",
+			schema: [
+				{ name: "group", required: true, selector: { text: {} } },
+				{ name: "default", selector: { text: {} } },
+			],
+		},
+	],
+	computeLabel: (field: FormField) => LABELS[field.name],
+	computeHelper: (field: FormField) => HELPERS[field.name],
+};
+
+/** One pill in `filter-bar`'s editor. */
+export const pillForm = {
+	schema: [
+		{ name: "value", required: true, selector: { text: {} } },
+		{ name: "name", selector: { text: {} } },
+		{ name: "icon", selector: { icon: {} } },
+	],
+	computeLabel: (field: FormField) => LABELS[field.name],
+	computeHelper: (field: FormField) => HELPERS[field.name],
+};

@@ -71,26 +71,48 @@ export function normalizeConfig(
 }
 
 const LABELS: Record<string, string> = {
-	entity: "Müll-Erinnerung",
+	entity: "Abholtermine",
 	max_rows: "Höchstens Zeilen",
+	bins: "Müllarten",
 	tap_action: "Beim Tippen",
 };
 
-/** HA renders this with its own form; `bins` is YAML-only (HA keeps keys the form doesn't show). */
+const HELPERS: Record<string, string> = {
+	entity:
+		"Eine Entität, die die nächsten Abholungen mitführt: je Termin die Müllart und das Datum, z. B. eine Vorlage aus dem Abfallkalender.",
+	bins: "Symbol und Farbe je Müllart; der Name muss so heißen wie im Sensor. Leer: Restmüll, Altpapier, Gelber Sack.",
+};
+
+/** HA renders this with its own form; every option has a German label. */
 export const configForm = {
 	schema: [
 		{
 			name: "entity",
 			required: true,
-			selector: { entity: { domain: "binary_sensor" } },
+			selector: { entity: {} },
 		},
 		{
 			name: "max_rows",
 			selector: { number: { min: 1, max: 3, mode: "box" } },
 		},
+		{
+			name: "bins",
+			selector: {
+				object: {
+					multiple: true,
+					label_field: "name",
+					fields: {
+						name: { label: "Name", required: true, selector: { text: {} } },
+						icon: { label: "Symbol", selector: { icon: {} } },
+						color: { label: "Farbe", selector: { text: { type: "color" } } },
+					},
+				},
+			},
+		},
 		{ name: "tap_action", selector: { ui_action: {} } },
 	],
 	computeLabel: (field: { name: string }) => LABELS[field.name],
+	computeHelper: (field: { name: string }) => HELPERS[field.name],
 	assertConfig: (config: LovelaceCardConfig) => {
 		normalizeConfig(config);
 	},

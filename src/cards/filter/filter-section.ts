@@ -12,6 +12,7 @@ import {
 	type GridOptions,
 	sectionGridStyles,
 } from "./section-grid";
+import "./section-editor";
 import { filterStore } from "./store";
 
 /** A card HA's helpers create; the grid hints are optional, as in HA's own sections. */
@@ -71,6 +72,10 @@ export class FilterSection extends LitElement {
 	constructor() {
 		super();
 		this._children = [];
+	}
+
+	static getConfigElement(): HTMLElement {
+		return document.createElement("filter-section-editor");
 	}
 
 	static getStubConfig(): Partial<LovelaceCardConfig> {

@@ -14,6 +14,7 @@ import type {
 } from "../../ha/types";
 import { activeAlert, alertIcon } from "./alerts";
 import { normalizeConfig, type RoomTileConfig, roomColor } from "./config";
+import "./editor";
 import { highlightStyle } from "./highlight";
 import { sensorEntities, sensorLine } from "./sensors";
 
@@ -67,6 +68,10 @@ export class RoomTileCard extends LitElement {
 	private _alertCandidates: string[] = [];
 	private _candidatesFor?: HomeAssistant["entities"];
 	private _featureContext: Record<string, unknown> = {};
+
+	static getConfigElement(): HTMLElement {
+		return document.createElement("room-tile-card-editor");
+	}
 
 	static getStubConfig(hass?: HomeAssistant): Partial<LovelaceCardConfig> {
 		const area = Object.keys(hass?.areas ?? {})[0] ?? "";

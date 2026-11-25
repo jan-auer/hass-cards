@@ -47,7 +47,6 @@ export function watchedEntities(config: WetterConfig): string[] {
 }
 
 const LABELS: Record<string, string> = {
-	layout: "Größe",
 	temperature: "Temperatur",
 	humidity: "Luftfeuchte",
 	condition: "Wetterlage (Vorhersage)",
@@ -61,19 +60,6 @@ const LABELS: Record<string, string> = {
 /** HA renders this with its own form; every option has a German label. */
 export const configForm = {
 	schema: [
-		{
-			name: "layout",
-			selector: {
-				select: {
-					mode: "dropdown",
-					options: [
-						{ value: "auto", label: "Automatisch (nach Breite)" },
-						{ value: "half", label: "Halbe Breite" },
-						{ value: "full", label: "Volle Breite" },
-					],
-				},
-			},
-		},
 		{
 			type: "grid",
 			name: "",

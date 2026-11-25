@@ -40,3 +40,32 @@ export function normalizeConfig(config: LovelaceCardConfig): WindConfig {
 		},
 	};
 }
+
+const LABELS: Record<string, string> = {
+	speed: "Windgeschwindigkeit",
+	gust: "Böen",
+	direction: "Windrichtung",
+	direction_avg: "Windrichtung, 10-Minuten-Mittel",
+	max_today: "Stärkste Böe heute",
+	tap_action: "Beim Tippen",
+};
+
+/** HA renders this with its own form; every option has a German label. */
+export const configForm = {
+	schema: [
+		{
+			type: "grid",
+			name: "",
+			schema: Object.keys(STUB_ENTITIES).map((name) => ({
+				name,
+				required: true,
+				selector: { entity: { domain: "sensor" } },
+			})),
+		},
+		{ name: "tap_action", selector: { ui_action: {} } },
+	],
+	computeLabel: (field: { name: string }) => LABELS[field.name],
+	assertConfig: (config: LovelaceCardConfig) => {
+		normalizeConfig(config);
+	},
+};

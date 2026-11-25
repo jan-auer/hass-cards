@@ -7,6 +7,7 @@ import type { HomeAssistant, LovelaceCardConfig } from "../../ha/types";
 import {
 	activeLevel,
 	bandGradient,
+	configForm,
 	dotPosition,
 	type LevelConfig,
 	normalizeConfig,
@@ -22,6 +23,10 @@ export class LevelCard extends LitElement {
 	static override properties = { _config: { state: true } };
 	declare _config?: LevelConfig;
 	private _hass?: HomeAssistant;
+
+	static getConfigForm() {
+		return configForm;
+	}
 
 	static getStubConfig(hass?: HomeAssistant): Partial<LovelaceCardConfig> {
 		const entity =

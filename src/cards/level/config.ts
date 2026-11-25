@@ -136,3 +136,96 @@ export function bandGradient(config: LevelConfig): string {
 export function valueText(value: number, language: string): string {
 	return decimal(value, Number.isInteger(value) ? 0 : 1, language);
 }
+
+type FormField = { name: string };
+
+const LABELS: Record<string, string> = {
+	entity: "Sensor",
+	name: "Name",
+	icon: "Symbol",
+	min: "Skala von",
+	max: "Skala bis",
+	suffix: "Text nach dem Wert",
+	start_label: "Beschriftung links",
+	middle_label: "Mitte",
+	end_label: "Rechts",
+	levels: "Stufen",
+	tap_action: "Beim Tippen",
+};
+
+const HELPERS: Record<string, string> = {
+	min: "Leer: die erste Stufe.",
+	suffix: "Nur für Stufen ohne Wort, z. B. von 5.",
+	start_label: "Leer: Anfang der Skala.",
+	end_label: "Leer: Ende der Skala mit +.",
+};
+
+/** HA renders this with its own form; every option has a German label. */
+export const configForm = {
+	schema: [
+		{ name: "entity", required: true, selector: { entity: {} } },
+		{
+			name: "name",
+			selector: { entity_name: {} },
+			context: { entity: "entity" },
+		},
+		{
+			name: "icon",
+			selector: { icon: {} },
+			context: { icon_entity: "entity" },
+		},
+		{
+			type: "grid",
+			name: "",
+			schema: [
+				{ name: "min", selector: { number: { mode: "box", step: "any" } } },
+				{
+					name: "max",
+					required: true,
+					selector: { number: { mode: "box", step: "any" } },
+				},
+			],
+		},
+		{
+			name: "levels",
+			required: true,
+			selector: {
+				object: {
+					multiple: true,
+					label_field: "word",
+					description_field: "from",
+					fields: {
+						from: {
+							label: "Ab",
+							required: true,
+							selector: { number: { mode: "box", step: "any" } },
+						},
+						word: { label: "Wort", selector: { text: {} } },
+						color: {
+							label: "Farbe",
+							required: true,
+							selector: { text: { type: "color" } },
+						},
+					},
+				},
+			},
+		},
+		{ name: "suffix", selector: { text: {} } },
+		{
+			type: "grid",
+			name: "",
+			column_min_width: "80px",
+			schema: [
+				{ name: "start_label", selector: { text: {} } },
+				{ name: "middle_label", selector: { text: {} } },
+				{ name: "end_label", selector: { text: {} } },
+			],
+		},
+		{ name: "tap_action", selector: { ui_action: {} } },
+	],
+	computeLabel: (field: FormField) => LABELS[field.name],
+	computeHelper: (field: FormField) => HELPERS[field.name],
+	assertConfig: (config: LovelaceCardConfig) => {
+		normalizeConfig(config);
+	},
+};
