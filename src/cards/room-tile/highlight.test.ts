@@ -10,6 +10,14 @@ describe("highlightStyle", () => {
 		expect(style.background ?? "").not.toMatch(/0\.[1-9]/);
 	});
 
+	it("lights the dark card from above, like the theme's own top edge, with a fainter bottom edge over a faint even ring", () => {
+		const { shadow } = highlightStyle("neutral", "dark", "0, 0, 0");
+		expect(shadow).toContain("inset 0 1px 0 0 rgba(255, 255, 255, 0.1)");
+		expect(shadow).toContain("inset 0 -1px 0 0 rgba(255, 255, 255, 0.025)");
+		expect(shadow).toContain("inset 0 0 0 1px rgba(255, 255, 255, 0.06)");
+		expect(shadow).toContain("0 0 10px rgba(255, 255, 255, 0.06)");
+	});
+
 	it("lifts a white card in light mode", () => {
 		expect(highlightStyle("neutral", "light", "0, 0, 0").background).toContain(
 			"#fff",

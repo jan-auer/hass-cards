@@ -18,13 +18,13 @@ const ring = (color: string) => `inset 0 0 0 1px ${color}`;
 const BASE = "var(--_card-shadow)";
 
 /**
- * The active room in a neutral tone. Dark: a soft white glow with a faint wash. Light: a
- * lifted white card.
+ * The active room in a neutral tone. Dark: lit from above like the theme's card edge (a top line and a fainter bottom line over a
+ * faint even ring), a soft white glow and a faint wash. Light: a lifted white card.
  */
 const NEUTRAL: Record<Mode, HighlightStyle> = {
 	dark: {
 		background: wash("rgba(255, 255, 255, 0.03)"),
-		shadow: `${ring("rgba(255, 255, 255, 0.22)")}, 0 0 10px rgba(255, 255, 255, 0.08), ${BASE}`,
+		shadow: `inset 0 1px 0 0 rgba(255, 255, 255, 0.1), inset 0 -1px 0 0 rgba(255, 255, 255, 0.025), ${ring("rgba(255, 255, 255, 0.06)")}, 0 0 10px rgba(255, 255, 255, 0.06), ${BASE}`,
 	},
 	light: {
 		background: "#fff",
