@@ -13,22 +13,6 @@ export interface EntityControl {
 	tap_action?: ActionConfig;
 	/** Default: more-info. */
 	hold_action?: ActionConfig;
-	/** When the button counts as on; default: HA's `stateActive` (a speaker only while it plays). */
-	active?: ActiveRule;
-	/** Colour while on: a theme colour name (`blue` → `--blue-color`) or any CSS colour; default: HA's state colour. */
-	active_color?: string;
-	/** The tap while on (e.g. `{action: none}` to guard it); default: `tap_action`. */
-	active_tap_action?: ActionConfig;
-}
-
-/**
- * On while the state (or, with `json_key`, that key of the state parsed as JSON, else `default`) is one of
- * `state`. For example, a lighting automation's intent kept as JSON in an input_text.
- */
-export interface ActiveRule {
-	state: string[];
-	json_key?: string;
-	default?: string;
 }
 
 export interface SpacerControl {
@@ -63,18 +47,6 @@ function readSpan(raw: unknown, position: number): Span {
 	return span;
 }
 
-function readActive(raw: unknown, position: number): ActiveRule {
-	const rule = (raw ?? {}) as Record<string, unknown>;
-	const states = Array.isArray(rule.state) ? rule.state : [rule.state];
-	if (states.length === 0 || states.some((state) => typeof state !== "string"))
-		throw new Error(`Eintrag ${position}: "active.state" fehlt`);
-	return {
-		state: states as string[],
-		...(typeof rule.json_key === "string" ? { json_key: rule.json_key } : {}),
-		...(typeof rule.default === "string" ? { default: rule.default } : {}),
-	};
-}
-
 function readControl(raw: unknown, index: number): Control {
 	const position = index + 1;
 	if (raw === "spacer") return { kind: "spacer", span: 1 };
@@ -88,15 +60,7 @@ function readControl(raw: unknown, index: number): Control {
 		return { kind: "spacer", span: readSpan(item.span, position) };
 	if (typeof item.entity !== "string" || !item.entity.includes("."))
 		throw new Error(`Eintrag ${position}: "entity" fehlt`);
-	const {
-		entity,
-		icon,
-		tap_action,
-		hold_action,
-		active,
-		active_color,
-		active_tap_action,
-	} = item;
+	const { entity, icon, tap_action, hold_action } = item;
 	return {
 		kind: "entity",
 		entity,
@@ -104,13 +68,6 @@ function readControl(raw: unknown, index: number): Control {
 		...(typeof icon === "string" && icon ? { icon } : {}),
 		...(tap_action ? { tap_action: tap_action as ActionConfig } : {}),
 		...(hold_action ? { hold_action: hold_action as ActionConfig } : {}),
-		...(active ? { active: readActive(active, position) } : {}),
-		...(typeof active_color === "string" && active_color
-			? { active_color }
-			: {}),
-		...(active_tap_action
-			? { active_tap_action: active_tap_action as ActionConfig }
-			: {}),
 	};
 }
 
@@ -210,22 +167,6 @@ export const configForm = {
 						hold_action: {
 							label: "Halten",
 							description: "Leer: Details",
-							selector: { ui_action: {} },
-						},
-						active: {
-							label: "An, wenn",
-							description:
-								"Leer: wie HA. Sonst z. B. state: none, json_key: intent, default: none",
-							selector: { object: {} },
-						},
-						active_color: {
-							label: "Farbe, wenn an",
-							description: "Leer: Zustandsfarbe. Sonst z. B. blue",
-							selector: { text: {} },
-						},
-						active_tap_action: {
-							label: "Tippen, wenn an",
-							description: "Leer: wie Tippen",
 							selector: { ui_action: {} },
 						},
 					},

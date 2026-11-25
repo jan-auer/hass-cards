@@ -20,9 +20,9 @@ import {
 	normalizeConfig,
 	type RoomControlsConfig,
 } from "./config";
-import { controlIcon } from "./icons";
+import { controlIcon, isOn } from "./icons";
 import { arrangeControls, type Cell } from "./layout";
-import { activeColorCss, isControlOn } from "./state";
+import { activeColorCss } from "./state";
 
 /** HA's hold time for actions (500 ms, as in its action handler). */
 const HOLD_MS = 500;
@@ -126,12 +126,8 @@ export class RoomControls extends LitElement {
 			return;
 		}
 		this._closeMenu();
-		const entity = this.hass?.states[control.entity];
-		const action =
-			entity && control.active_tap_action && isControlOn(control, entity)
-				? control.active_tap_action
-				: (control.tap_action ?? TOGGLE);
-		// A guarded tap (`{action: none}`) does nothing at all, not even a haptic.
+		const action = control.tap_action ?? TOGGLE;
+		// A tap set to `{action: none}` does nothing at all, not even a haptic.
 		if (action.action === "none") return;
 		this._run(action, control);
 	}
@@ -196,10 +192,10 @@ export class RoomControls extends LitElement {
 		if (!entity) {
 			return html`<button type="button" class="control" style=${span} data-entity=${control.entity} title=${control.entity} disabled><ha-icon icon="mdi:help-circle-outline"></ha-icon></button>`;
 		}
-		const on = isControlOn(control, entity);
+		const on = isOn(entity);
 		const unavailable = entity.state === "unavailable";
 		// The theme's state colour through HA's cascade, like HA's own feature buttons (decision #48).
-		const color = on ? `; --_state: ${activeColorCss(control, entity)}` : "";
+		const color = on ? `; --_state: ${activeColorCss(entity)}` : "";
 		const press = this._pressHandlers(control);
 		const name = String(entity.attributes.friendly_name ?? control.entity);
 		return html`<button
@@ -221,9 +217,8 @@ export class RoomControls extends LitElement {
 
 	private _menuItem(control: EntityControl): TemplateResult {
 		const entity = this.hass?.states[control.entity];
-		const on = entity !== undefined && isControlOn(control, entity);
-		const color =
-			on && entity ? `--_state: ${activeColorCss(control, entity)}` : "";
+		const on = entity !== undefined && isOn(entity);
+		const color = on && entity ? `--_state: ${activeColorCss(entity)}` : "";
 		const press = this._pressHandlers(control);
 		const name = String(entity?.attributes.friendly_name ?? control.entity);
 		const state = entity

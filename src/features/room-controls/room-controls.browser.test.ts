@@ -207,47 +207,24 @@ describe("room-controls", () => {
 		expect(button("light.room").getBoundingClientRect().height).toBe(36);
 	});
 
-	// An "Auto" button: active while the lighting JSON says intent none, then blue and a tap does nothing;
-	// otherwise grey and a tap resets to Auto.
-	it("uses a per-item active rule, colour and tap action", async () => {
+	// The state colour and the tap come from the entity alone; there are no per-item overrides.
+	it("colours from the entity's state and taps with tap_action only", async () => {
 		const actions = captureActions();
-		const reset = {
-			action: "perform-action",
-			perform_action: "script.control_smart_lights",
-			data: { action: "reset", entity_id: "input_text.wohnzimmer_licht" },
-		};
-		const auto = {
-			entity: "input_text.wohnzimmer_licht",
-			icon: "mdi:auto-mode",
-			active: { json_key: "intent", default: "none", state: "none" },
-			active_color: "blue",
-			tap_action: reset,
-			active_tap_action: { action: "none" },
-		};
-		const text = (value: string) =>
-			mockHass({
-				"input_text.wohnzimmer_licht": entity(
-					"input_text.wohnzimmer_licht",
-					value,
-				),
-			});
-		await mount({ controls: [auto] }, text('{"intent":"none"}'));
-		const autoButton = () => button("input_text.wohnzimmer_licht");
-		expect(autoButton().classList.contains("on")).toBe(true);
-		expect(autoButton().getAttribute("style")).toContain(
-			"--_state: var(--blue-color)",
+		const reset = { action: "perform-action", perform_action: "script.x" };
+		await mount({
+			controls: [
+				{
+					entity: "light.room",
+					tap_action: reset,
+					active_color: "blue",
+					active_tap_action: { action: "none" },
+				},
+			],
+		});
+		expect(button("light.room").getAttribute("style")).not.toContain(
+			"--blue-color",
 		);
-		autoButton().click();
-		row.hass = text('{"intent":"on"}');
-		await row.updateComplete;
-		expect(autoButton().classList.contains("on")).toBe(false);
-		autoButton().click();
-		row.hass = text("kaputt");
-		await row.updateComplete;
-		expect(autoButton().classList.contains("on")).toBe(true);
-		// While active the tap does nothing at all; inactive it resets.
-		expect(actions).toEqual([
-			{ entity: "input_text.wohnzimmer_licht", tap_action: reset },
-		]);
+		button("light.room").click();
+		expect(actions).toEqual([{ entity: "light.room", tap_action: reset }]);
 	});
 });

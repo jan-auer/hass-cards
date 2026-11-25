@@ -77,9 +77,6 @@ describe("configForm", () => {
 			"icon",
 			"tap_action",
 			"hold_action",
-			"active",
-			"active_color",
-			"active_tap_action",
 		]);
 	});
 
