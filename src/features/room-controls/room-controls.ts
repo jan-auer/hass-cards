@@ -31,9 +31,9 @@ const TOGGLE: ActionConfig = { action: "toggle" };
 const MORE_INFO: ActionConfig = { action: "more-info" };
 
 /**
- * A row of buttons for any entities, as a card feature (`type: custom:room-controls` in the `features:`
- * of a tile, area or our own card). Looks like HA's own feature buttons (`area-controls`), and adds what
- * those can't: any tap action, spacers, wide items and a "…" menu past 4 slots.
+ * A room's buttons, as a card feature (`type: custom:room-controls` in the `features:` of an area card or
+ * room-tile-card; other cards get a hint instead). Looks like HA's own feature buttons (`area-controls`),
+ * and adds what those can't: any entities and tap action, spacers and wide items, up to 4 slots.
  */
 export class RoomControls extends LitElement {
 	static override properties = {
@@ -44,7 +44,7 @@ export class RoomControls extends LitElement {
 	};
 
 	declare hass?: HomeAssistant;
-	/** What the host card passes: its entity or area. Unused; the row names its own entities. */
+	/** What the host card passes; the row needs its area (the buttons name their own entities). */
 	declare context?: Record<string, unknown>;
 	/** `bottom` or `inline`; the host sets `--feature-height` for each. */
 	declare position?: "bottom" | "inline";
@@ -58,14 +58,8 @@ export class RoomControls extends LitElement {
 		return configForm;
 	}
 
-	static getStubConfig(
-		_hass?: HomeAssistant,
-		context?: { entity_id?: string },
-	): LovelaceCardConfig {
-		return {
-			type: "custom:room-controls",
-			controls: context?.entity_id ? [{ entity: context.entity_id }] : [],
-		};
+	static getStubConfig(): LovelaceCardConfig {
+		return { type: "custom:room-controls", controls: [] };
 	}
 
 	setConfig(config: LovelaceCardConfig): void {
@@ -108,7 +102,6 @@ export class RoomControls extends LitElement {
 		this._held = false;
 		this._holdTimer = setTimeout(() => {
 			this._held = true;
-			this._closeMenu();
 			this._run(control.hold_action ?? MORE_INFO, control);
 		}, HOLD_MS);
 	}
@@ -125,54 +118,19 @@ export class RoomControls extends LitElement {
 			this._held = false;
 			return;
 		}
-		this._closeMenu();
 		const action = control.tap_action ?? TOGGLE;
 		// A tap set to `{action: none}` does nothing at all, not even a haptic.
 		if (action.action === "none") return;
 		this._run(action, control);
 	}
 
-	/** Pointer and click handlers shared by the row's buttons and the menu's items. */
-	private _pressHandlers(control: EntityControl) {
-		return {
-			down: () => this._pointerDown(control),
-			cancel: () => this._cancelHold(),
-			click: (event: Event) => this._click(event, control),
-		};
-	}
-
-	private get _menu(): HTMLDialogElement | null | undefined {
-		return this.shadowRoot?.querySelector("dialog");
-	}
-
-	private _openMenu(event: Event): void {
-		event.stopPropagation();
-		this._menu?.showModal();
-	}
-
-	private _closeMenu(): void {
-		if (this._menu?.open) this._menu.close();
-	}
-
 	override render() {
 		const config = this._config;
 		if (!config) return nothing;
-		const { columns, cells, overflow } = arrangeControls(
-			config.controls,
-			config.columns,
-		);
-		return html`
-			<div class="row" style="--_columns: ${columns}">${cells.map((cell) => this._cell(cell))}</div>
-			${
-				overflow.length
-					? html`<dialog
-							@click=${(event: Event) => {
-								if (event.target === event.currentTarget) this._closeMenu();
-							}}
-						><div class="menu">${overflow.map((control) => this._menuItem(control))}</div></dialog>`
-					: nothing
-			}
-		`;
+		if (!hasArea(this.context))
+			return html`<div class="hint">Nur auf Raum-Karten</div>`;
+		const { columns, cells } = arrangeControls(config.controls, config.columns);
+		return html`<div class="row" style="--_columns: ${columns}">${cells.map((cell) => this._cell(cell))}</div>`;
 	}
 
 	private _cell(cell: Cell): TemplateResult {
@@ -180,8 +138,6 @@ export class RoomControls extends LitElement {
 		switch (cell.kind) {
 			case "spacer":
 				return html`<span class="spacer ${this._config?.spacer_style}" style=${span} aria-hidden="true"></span>`;
-			case "more":
-				return html`<button type="button" class="control more" aria-label="Mehr" title="Mehr" @click=${this._openMenu}><ha-icon icon="mdi:dots-horizontal"></ha-icon></button>`;
 			case "entity":
 				return this._button(cell.control, span);
 		}
@@ -196,7 +152,6 @@ export class RoomControls extends LitElement {
 		const unavailable = entity.state === "unavailable";
 		// The theme's state colour through HA's cascade, like HA's own feature buttons (decision #48).
 		const color = on ? `; --_state: ${activeColorCss(entity)}` : "";
-		const press = this._pressHandlers(control);
 		const name = String(entity.attributes.friendly_name ?? control.entity);
 		return html`<button
 			type="button"
@@ -206,39 +161,13 @@ export class RoomControls extends LitElement {
 			aria-label=${name}
 			title=${name}
 			aria-pressed=${on ? "true" : "false"}
-			@pointerdown=${press.down}
-			@pointerup=${press.cancel}
-			@pointercancel=${press.cancel}
-			@pointerleave=${press.cancel}
+			@pointerdown=${() => this._pointerDown(control)}
+			@pointerup=${this._cancelHold}
+			@pointercancel=${this._cancelHold}
+			@pointerleave=${this._cancelHold}
 			@contextmenu=${(event: Event) => event.preventDefault()}
-			@click=${press.click}
+			@click=${(event: Event) => this._click(event, control)}
 		><ha-icon icon=${controlIcon(entity, control.icon, on)}></ha-icon></button>`;
-	}
-
-	private _menuItem(control: EntityControl): TemplateResult {
-		const entity = this.hass?.states[control.entity];
-		const on = entity !== undefined && isOn(entity);
-		const color = on && entity ? `--_state: ${activeColorCss(entity)}` : "";
-		const press = this._pressHandlers(control);
-		const name = String(entity?.attributes.friendly_name ?? control.entity);
-		const state = entity
-			? (this.hass?.formatEntityState?.(entity) ?? entity.state)
-			: "";
-		return html`<button
-			type="button"
-			class="item"
-			data-entity=${control.entity}
-			@pointerdown=${press.down}
-			@pointerup=${press.cancel}
-			@pointercancel=${press.cancel}
-			@pointerleave=${press.cancel}
-			@contextmenu=${(event: Event) => event.preventDefault()}
-			@click=${press.click}
-		>
-			<span class="chip ${on ? "on" : ""}" style=${color}><ha-icon icon=${entity ? controlIcon(entity, control.icon, on) : "mdi:help-circle-outline"}></ha-icon></span>
-			<span class="name">${name}</span>
-			<span class="state">${state}</span>
-		</button>`;
 	}
 
 	/*
@@ -258,8 +187,7 @@ export class RoomControls extends LitElement {
 			   pointer-events: auto on this element from outside, and only an important :host rule beats it. */
 			pointer-events: none !important;
 		}
-		button,
-		dialog {
+		button {
 			pointer-events: auto;
 		}
 		.row {
@@ -267,8 +195,7 @@ export class RoomControls extends LitElement {
 			grid-template-columns: repeat(var(--_columns), minmax(0, 1fr));
 			gap: var(--_gap);
 		}
-		.control,
-		.chip {
+		.control {
 			position: relative;
 			z-index: 0;
 			overflow: hidden;
@@ -298,7 +225,6 @@ export class RoomControls extends LitElement {
 			-webkit-user-select: none;
 		}
 		.control::before,
-		.chip::before,
 		.spacer.ghost::before {
 			content: "";
 			position: absolute;
@@ -310,12 +236,10 @@ export class RoomControls extends LitElement {
 				background-color 180ms ease-in-out,
 				opacity 180ms ease-in-out;
 		}
-		.control.on,
-		.chip.on {
+		.control.on {
 			color: var(--_state);
 		}
-		.control.on::before,
-		.chip.on::before {
+		.control.on::before {
 			background-color: var(--_state);
 		}
 		.control:active::before {
@@ -343,72 +267,21 @@ export class RoomControls extends LitElement {
 			opacity: 0.08;
 		}
 
-		dialog {
-			padding: 0;
-			border: none;
-			border-radius: var(--ha-card-border-radius, 12px);
-			background: var(--card-background-color, #fff);
-			color: var(--primary-text-color);
-			min-width: 240px;
-			max-width: calc(100vw - 32px);
-			box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24);
-		}
-		dialog::backdrop {
-			background: rgba(0, 0, 0, 0.32);
-		}
-		.menu {
-			display: flex;
-			flex-direction: column;
-			padding: 8px;
-		}
-		.item {
-			appearance: none;
-			display: flex;
-			align-items: center;
-			gap: 12px;
-			width: 100%;
-			min-height: 52px;
-			margin: 0;
-			padding: 0 8px;
-			border: none;
-			border-radius: 12px;
-			background: none;
-			color: inherit;
-			font: inherit;
-			font-size: var(--ha-font-size-m, 14px);
-			text-align: start;
-			cursor: pointer;
-			-webkit-tap-highlight-color: transparent;
-			-webkit-touch-callout: none;
-			user-select: none;
-			-webkit-user-select: none;
-		}
-		.item:active {
-			background: rgba(var(--rgb-primary-text-color, 0, 0, 0), 0.06);
-		}
-		.chip {
-			flex: none;
-			width: 36px;
-			height: 36px;
-			border-radius: 10px;
-		}
-		.name {
-			flex: 1;
-			min-width: 0;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-		}
-		.state {
+		.hint {
+			padding: 0 4px;
 			color: var(--secondary-text-color);
+			font-size: var(--ha-font-size-s, 12px);
 		}
 	`;
+}
+
+function hasArea(context?: Record<string, unknown>): boolean {
+	return typeof context?.area_id === "string" && context.area_id !== "";
 }
 
 registerCardFeature("room-controls", RoomControls, {
 	name: "Raum-Schalter",
 	// A room's buttons: offered only on cards about an area (the area card, room-tile-card).
-	isSupported: (_hass, context) =>
-		typeof context.area_id === "string" && context.area_id !== "",
+	isSupported: (_hass, context) => hasArea(context),
 	configurable: true,
 });

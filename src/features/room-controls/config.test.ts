@@ -47,6 +47,29 @@ describe("normalizeConfig", () => {
 		).toThrow(/2.*span/);
 		expect(bad({ controls: [], spacer_style: "left" })).toThrow(/spacer_style/);
 		expect(bad({ controls: [], columns: 5 })).toThrow(/columns/);
+		// No "…" menu: a row holds at most 4 slots, or its `columns`.
+		expect(
+			bad({
+				controls: ["light.a", "light.b", "light.c", "light.d", "light.e"],
+			}),
+		).toThrow(/Plätze/);
+		expect(
+			bad({
+				controls: ["light.a", { entity: "light.b", span: 2 }],
+				columns: 2,
+			}),
+		).toThrow(/Plätze/);
+		expect(() =>
+			normalizeConfig({
+				type: "custom:room-controls",
+				controls: [
+					{ entity: "light.a", span: "rest" },
+					"light.b",
+					"light.c",
+					"light.d",
+				],
+			}),
+		).not.toThrow();
 	});
 
 	it("treats a missing list as an empty row", () => {

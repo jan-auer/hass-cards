@@ -1,4 +1,5 @@
 import type { ActionConfig, LovelaceCardConfig } from "../../ha/types";
+import { MAX_SLOTS, slotWidth } from "./layout";
 
 /** How many slots an item takes: one, two, or what's left of the row. */
 export type Span = 1 | 2 | "rest";
@@ -89,8 +90,15 @@ export function normalizeConfig(
 		)
 	)
 		throw new Error('"columns" muss 1 bis 4 sein');
+	const items = controls.map(readControl);
+	const limit = (columns as number | undefined) ?? MAX_SLOTS;
+	const needed = items.reduce((sum, item) => sum + slotWidth(item), 0);
+	if (needed > limit)
+		throw new Error(
+			`Zu viele Knöpfe: ${needed} Plätze, höchstens ${limit} pro Zeile`,
+		);
 	return {
-		controls: controls.map(readControl),
+		controls: items,
 		spacer_style: spacer_style as SpacerStyle,
 		...(columns !== undefined ? { columns: columns as number } : {}),
 	};
@@ -108,7 +116,7 @@ const LABELS: Record<string, string> = {
 
 const HELPERS: Record<string, string> = {
 	columns:
-		"1–4. Leer: so viele, wie die Knöpfe brauchen (4, wenn einer den Rest nimmt). Mehr als 4: „…“-Menü.",
+		"1–4. Leer: so viele, wie die Knöpfe brauchen (4, wenn einer den Rest nimmt).",
 };
 
 /**

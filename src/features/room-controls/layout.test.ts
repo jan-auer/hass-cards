@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import type { Control } from "./config";
 import { arrangeControls } from "./layout";
 
-// An ordered list of entities and spacers; a span of 1, 2 or the rest per item; at most 4 slots, anything beyond
-// collapses into a "…" menu.
+// An ordered list of entities and spacers; a span of 1, 2 or the rest per item; at most 4 slots (the config
+// refuses more).
 const e = (entity: string, span: Control["span"] = 1): Control => ({
 	kind: "entity",
 	entity,
@@ -25,7 +25,6 @@ describe("arrangeControls", () => {
 			["entity", 1],
 			["entity", 1],
 		]);
-		expect(result.overflow).toEqual([]);
 	});
 
 	it("keeps a spacer where it is", () => {
@@ -76,58 +75,6 @@ describe("arrangeControls", () => {
 		expect(spans(result)).toEqual([
 			["entity", 1],
 			["entity", 1],
-		]);
-	});
-
-	it("shows 3 items and a … with more than 4 slots; the menu holds the rest", () => {
-		const result = arrangeControls([e("a"), e("b"), e("c"), e("d"), e("f")]);
-		expect(result.columns).toBe(4);
-		expect(spans(result)).toEqual([
-			["entity", 1],
-			["entity", 1],
-			["entity", 1],
-			["more", 1],
-		]);
-		expect(result.overflow.map((c) => c.kind === "entity" && c.entity)).toEqual(
-			["d", "f"],
-		);
-	});
-
-	it("drops spacers from the menu", () => {
-		const result = arrangeControls([
-			e("a"),
-			spacer(),
-			e("b"),
-			e("c"),
-			spacer(),
-			e("d"),
-		]);
-		expect(spans(result).at(-1)).toEqual(["more", 1]);
-		expect(result.overflow.map((c) => c.kind === "entity" && c.entity)).toEqual(
-			["c", "d"],
-		);
-	});
-
-	it("keeps order: an item that doesn't fit before the … goes to the menu with everything after it", () => {
-		const result = arrangeControls([e("a"), e("b"), e("c", 2), e("d")]);
-		expect(spans(result)).toEqual([
-			["entity", 1],
-			["entity", 1],
-			["spacer", 1],
-			["more", 1],
-		]);
-		expect(result.overflow.map((c) => c.kind === "entity" && c.entity)).toEqual(
-			["c", "d"],
-		);
-	});
-
-	it("counts the row's `columns` as the limit", () => {
-		const result = arrangeControls([e("a"), e("b"), e("c"), e("d")], 3);
-		expect(result.columns).toBe(3);
-		expect(spans(result)).toEqual([
-			["entity", 1],
-			["entity", 1],
-			["more", 1],
 		]);
 	});
 });

@@ -177,7 +177,7 @@ features:
 
 ### Room controls (card feature)
 
-A row of buttons for any card that has features: the room tile, HA's tile and area cards, Mushroom.
+A room's row of buttons, up to four slots, on cards about an area: the room tile and HA's area card.
 
 ```yaml
 features:

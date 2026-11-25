@@ -37,10 +37,12 @@ async function mount(
 	config: Record<string, unknown>,
 	hass = mockHass(),
 	position: "bottom" | "inline" = "bottom",
+	context: Record<string, unknown> = { area_id: "living_room" },
 ): Promise<RoomControls> {
 	row = document.createElement("room-controls") as RoomControls;
 	row.setConfig({ type: "custom:room-controls", ...config });
 	row.hass = hass;
+	row.context = context;
 	row.position = position;
 	row.style.width = "300px";
 	document.body.append(row);
@@ -151,32 +153,12 @@ describe("room-controls", () => {
 		]);
 	});
 
-	it("collapses everything beyond 4 slots into a … menu", async () => {
-		const actions = captureActions();
-		await mount({
-			controls: [
-				"light.room",
-				"cover.room",
-				"media_player.room",
-				"switch.a",
-				"switch.b",
-			],
+	it("shows only a hint on a card without an area", async () => {
+		await mount({ controls: ["light.room"] }, mockHass(), "bottom", {
+			entity_id: "light.room",
 		});
-		expect($$(".row > *").length).toBe(4);
-		const more = row.shadowRoot?.querySelector<HTMLElement>("button.more");
-		more?.click();
-		await row.updateComplete;
-		const dialog = row.shadowRoot?.querySelector("dialog");
-		expect(dialog?.open).toBe(true);
-		const items = $$("dialog .item");
-		expect(
-			items.map((item) => item.textContent?.replace(/\s+/g, " ").trim()),
-		).toEqual(["Steckdose off", "Lüfter on"]);
-		items[1].click();
-		expect(actions).toEqual([
-			{ entity: "switch.b", tap_action: { action: "toggle" } },
-		]);
-		expect(dialog?.open).toBe(false);
+		expect($$("button").length).toBe(0);
+		expect(row.shadowRoot?.textContent).toContain("Raum");
 	});
 
 	it("ignores state changes of other entities", async () => {
