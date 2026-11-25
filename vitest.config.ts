@@ -22,7 +22,10 @@ export default defineConfig({
 					include: ["src/**/*.browser.test.ts"],
 					browser: {
 						enabled: true,
-						provider: playwright(),
+						// The fixtures' dates are written for Central European time; pin it so CI (UTC) agrees.
+						provider: playwright({
+							contextOptions: { timezoneId: "Europe/Vienna" },
+						}),
 						headless: true,
 						instances: [{ browser: "webkit" }],
 					},
