@@ -21,7 +21,12 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Image matches package.json's playwright
-        run: test "$(node -p "require('playwright/package.json').version")" = "1.65.1"
+        run: |
+          version="$(node -p "require('playwright/package.json').version")"
+          if [ "${version}" != "1.65.1" ]; then
+            echo "playwright is ${version} but the CI image is v1.65.1: update the container tag in ci.yml" >&2
+            exit 1
+          fi
       - run: npm run lint
       - run: npm test
       - run: npm run build
