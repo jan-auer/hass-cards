@@ -1,6 +1,6 @@
 {
 	"name": "hass-cards",
-	"version": "0.1.3",
+	"version": "0.1.4",
 	"private": true,
 	"description": "Jan's personal Lovelace cards for Home Assistant",
 	"type": "module",
