@@ -1,4 +1,4 @@
-# hass-cards
+# Home Assistant Cards
 
 My personal Lovelace cards for Home Assistant. I built them for my own dashboard, so the labels are German and a few cards expect my sensors. Most of them work in any dashboard, though.
 
