@@ -10,6 +10,9 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
+    # Playwright's image has WebKit and its system libraries preinstalled, so the render tests need no install
+    # step. Keep its tag in sync with the playwright version in package.json (the first step checks it).
+    container: mcr.microsoft.com/playwright:v1.65.1-noble
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -17,7 +20,8 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps webkit
+      - name: Image matches package.json's playwright
+        run: test "$(node -p "require('playwright/package.json').version")" = "1.65.1"
       - run: npm run lint
       - run: npm test
       - run: npm run build
